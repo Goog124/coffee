@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>594</height>
+    <height>492</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,24 +20,6 @@
    <string>Кофейный список</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="show_button">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>410</y>
-      <width>781</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>60</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Хочу кофе!!!</string>
-    </property>
-   </widget>
    <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
@@ -60,6 +42,54 @@
     <column/>
     <column/>
     <column/>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>5</x>
+      <y>409</y>
+      <width>791</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="show_button">
+       <property name="font">
+        <font>
+         <pointsize>18</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Показать список кофе</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="add_button">
+       <property name="font">
+        <font>
+         <pointsize>18</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Добавить кофе</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="delete_button">
+       <property name="font">
+        <font>
+         <pointsize>18</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Удалить позицию</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
