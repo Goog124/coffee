@@ -36,6 +36,28 @@ class AddWindow(QDialog):
     def __init__(self):
         super().__init__()
         uic.loadUi('addEditCoffeeForm.ui', self)
+        self.cancelButton.clicked.connect(self.cancel)
+        self.addButton.clicked.connect(self.button_add)
+        self.lineEdit_list = [self.lineEdit_sort,
+                             self.lineEdit_degree,
+                             self.lineEdit_forma,
+                             self.lineEdit_description,
+                             self.lineEdit_price,
+                             self.lineEdit_size]
+        for line in self.lineEdit_list:
+            line.textChanged.connect(self.button_enabler)
+
+    def cancel(self):
+        self.close()
+
+    def button_enabler(self):
+        if all(map(lambda x: x.text().strip(), self.lineEdit_list)):
+            self.addButton.setEnabled(True)
+        else:
+            self.addButton.setEnabled(False)
+
+    def button_add(self):
+        pass
 
 
 if __name__ == '__main__':
