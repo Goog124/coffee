@@ -4,8 +4,6 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QTableWidgetItem
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
 
-RU_ALF = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЫЭЮЯ"
-
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -51,13 +49,37 @@ class AddWindow(QDialog):
         self.close()
 
     def button_enabler(self):
-        if all(map(lambda x: x.text().strip(), self.lineEdit_list)):
+        if all(map(lambda x: x.text().strip(), self.lineEdit_list)) and \
+                self.is_number(self.lineEdit_degree.text().strip()) and \
+                self.is_number(self.lineEdit_price.text().strip()) and \
+                self.is_number(self.lineEdit_size.text().strip()):
             self.addButton.setEnabled(True)
         else:
             self.addButton.setEnabled(False)
 
+    def is_number(self, s):
+        try:
+            float(s)
+            return True
+        except ValueError:
+            return False
+
     def button_add(self):
-        pass
+        sort = self.lineEdit_sort.text()
+        degree = int(self.lineEdit_degree.text())
+        forma = self.lineEdit_forma.text()
+        description = self.lineEdit_description.text()
+        price = self.lineEdit_price.text()
+        size = self.lineEdit_size.text()
+        con = sqlite3.connect("coffee.sqlite")
+        cur = con.cursor()
+        cur.execute(f"""INSERT INTO coffee_table(sort, degree, forma, description, price, size)
+                                VALUES ({sort}, {degree}, {forma}, {description}, {price}, {size})""")
+        con.commit()
+        con.close()
+        for i in self.lineEdit_list:
+            i.setText("")
+        ex.refresh_list()
 
 
 if __name__ == '__main__':
