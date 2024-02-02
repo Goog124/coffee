@@ -22,6 +22,7 @@ class MainWindow(QMainWindow):
         cur = con.cursor()
         result = cur.execute(f"""SELECT * from coffee_table""").fetchall() #вывод всего из БД
         con.close()
+        self.tableWidget.setRowCount(0)
         for row_data in result:
             row_number = self.tableWidget.rowCount()
             self.tableWidget.insertRow(row_number)
@@ -50,7 +51,7 @@ class AddWindow(QDialog):
 
     def button_enabler(self):
         if all(map(lambda x: x.text().strip(), self.lineEdit_list)) and \
-                self.is_number(self.lineEdit_degree.text().strip()) and \
+                self.lineEdit_degree.text().strip().isdigit() and \
                 self.is_number(self.lineEdit_price.text().strip()) and \
                 self.is_number(self.lineEdit_size.text().strip()):
             self.addButton.setEnabled(True)
