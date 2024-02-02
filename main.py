@@ -12,6 +12,8 @@ class MainWindow(QMainWindow):
         self.tableWidget.setHorizontalHeaderLabels(['ID', 'название сорта', 'степень обжарки',
                                                     'вид помола', 'описание вкуса', 'цена', 'объем упаковки'])
         self.show_button.clicked.connect(self.refresh_list)
+        self.tableWidget.itemSelectionChanged.connect(self.activate_updater)
+        self.delete_button.clicked.connect(self.delete_or_insert)
         self.add_button.clicked.connect(self.show_addform)
 
     def show_addform(self):
@@ -30,6 +32,17 @@ class MainWindow(QMainWindow):
                 self.tableWidget.setItem(
                     row_number, column_number, QTableWidgetItem(str(data)))
 
+    def activate_updater(self):
+        sen = self.sender()
+        if sen.currentRow() is not None:
+            self.row_current = sen.currentRow()
+            self.delete_button.setEnabled(True)
+            self.delete_button.setText(f"Изменить строку {sen.currentRow() + 1}")
+        else:
+            self.delete_button.setEnabled(False)
+
+    def delete_or_insert(self):
+        pass
 
 class AddWindow(QDialog):
     def __init__(self):

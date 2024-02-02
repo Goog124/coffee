@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>492</height>
+    <height>493</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,11 +29,17 @@
       <height>391</height>
      </rect>
     </property>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectRows</enum>
+    </property>
     <property name="columnCount">
      <number>7</number>
     </property>
     <attribute name="horizontalHeaderCascadingSectionResizes">
      <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderVisible">
+     <bool>true</bool>
     </attribute>
     <column/>
     <column/>
@@ -79,13 +85,16 @@
      </item>
      <item>
       <widget class="QPushButton" name="delete_button">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="font">
         <font>
          <pointsize>18</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>Удалить позицию</string>
+        <string>Изменить</string>
        </property>
       </widget>
      </item>
