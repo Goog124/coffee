@@ -13,11 +13,17 @@ class MainWindow(QMainWindow):
                                                     'вид помола', 'описание вкуса', 'цена', 'объем упаковки'])
         self.show_button.clicked.connect(self.refresh_list)
         self.tableWidget.itemSelectionChanged.connect(self.activate_updater)
-        self.delete_button.clicked.connect(self.delete_or_insert)
+        self.update_button.clicked.connect(self.show_updateform)
         self.add_button.clicked.connect(self.show_addform)
+        self.delete_button.clicked.connect(self.delete_btn)
 
     def show_addform(self):
         add_window.show()
+
+    def show_updateform(self):
+        datarow = list(map(lambda x: x.text(), self.tableWidget.selectedItems()))
+        update_window.fillForm(datarow)
+        update_window.show()
 
     def refresh_list(self):
         con = sqlite3.connect("coffee.sqlite")
@@ -31,18 +37,33 @@ class MainWindow(QMainWindow):
             for column_number, data in enumerate(row_data):
                 self.tableWidget.setItem(
                     row_number, column_number, QTableWidgetItem(str(data)))
+        self.update_button.setEnabled(False)
+        self.update_button.setText(f"Изменить")
 
     def activate_updater(self):
         sen = self.sender()
-        if sen.currentRow() is not None:
+        if self.tableWidget.selectedItems():
             self.row_current = sen.currentRow()
+            self.update_button.setEnabled(True)
             self.delete_button.setEnabled(True)
-            self.delete_button.setText(f"Изменить строку {sen.currentRow() + 1}")
+            self.update_button.setText(f"Изменить строку {sen.currentRow() + 1}")
+            self.delete_button.setText(f"Удалить строку {sen.currentRow() + 1}")
         else:
+            self.update_button.setEnabled(False)
             self.delete_button.setEnabled(False)
+            self.update_button.setText(f"Изменить")
+            self.delete_button.setText(f"Удалить")
 
-    def delete_or_insert(self):
-        pass
+    def delete_btn(self):
+        del_id = int(self.tableWidget.selectedItems()[0].text())
+        con = sqlite3.connect("coffee.sqlite")
+        cur = con.cursor()
+        cur.execute(f"""DELETE FROM coffee_table
+                        WHERE id = {del_id}""")
+        con.commit()
+        con.close()
+        self.refresh_list()
+
 
 class AddWindow(QDialog):
     def __init__(self):
@@ -96,6 +117,50 @@ class AddWindow(QDialog):
         ex.refresh_list()
 
 
+class UpdateWindow(AddWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('addEditCoffeeForm.ui', self)
+        self.cancelButton.clicked.connect(self.cancel)
+        self.addButton.clicked.connect(self.UpdateButton)
+        self.addButton.setText("Внести изменения")
+        self.lineEdit_list = [self.lineEdit_sort,
+                              self.lineEdit_degree,
+                              self.lineEdit_forma,
+                              self.lineEdit_description,
+                              self.lineEdit_price,
+                              self.lineEdit_size]
+        for line in self.lineEdit_list:
+            line.textChanged.connect(self.button_enabler)
+
+    def UpdateButton(self):
+        sort = self.lineEdit_sort.text()
+        degree = int(self.lineEdit_degree.text())
+        forma = self.lineEdit_forma.text()
+        description = self.lineEdit_description.text()
+        price = self.lineEdit_price.text()
+        size = self.lineEdit_size.text()
+        con = sqlite3.connect("coffee.sqlite")
+        cur = con.cursor()
+        cur.execute(f"""UPDATE coffee_table
+                        SET sort = '{sort}', 
+                            degree = {degree}, 
+                            forma = '{forma}', 
+                            description = '{description}', 
+                            price = '{price}', 
+                            size = '{size}'
+                        WHERE id = {self.id}
+                        """)
+        con.commit()
+        con.close()
+        ex.refresh_list()
+
+    def fillForm(self, datarow):
+        self.id = int(datarow[0])
+        for i in range(len(self.lineEdit_list)):
+            self.lineEdit_list[i].setText(datarow[i + 1])
+
+
 if __name__ == '__main__':
     from PyQt5 import QtCore, QtWidgets
 
@@ -108,6 +173,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = MainWindow()
     add_window = AddWindow()
+    update_window = UpdateWindow()
     ex.show()
     sys.exit(app.exec())
 
