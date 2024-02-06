@@ -43,7 +43,6 @@ class MainWindow(QMainWindow):
     def activate_updater(self):
         sen = self.sender()
         if self.tableWidget.selectedItems():
-            self.row_current = sen.currentRow()
             self.update_button.setEnabled(True)
             self.delete_button.setEnabled(True)
             self.update_button.setText(f"Изменить строку {sen.currentRow() + 1}")
@@ -101,7 +100,7 @@ class AddWindow(QDialog):
 
     def button_add(self):
         sort = self.lineEdit_sort.text()
-        degree = int(self.lineEdit_degree.text())
+        degree = self.lineEdit_degree.text()
         forma = self.lineEdit_forma.text()
         description = self.lineEdit_description.text()
         price = self.lineEdit_price.text()
@@ -109,7 +108,7 @@ class AddWindow(QDialog):
         con = sqlite3.connect("coffee.sqlite")
         cur = con.cursor()
         cur.execute(f"""INSERT INTO coffee_table(sort, degree, forma, description, price, size)
-                                VALUES ({sort}, {degree}, {forma}, {description}, {price}, {size})""")
+                        VALUES ('{sort}', '{degree}', '{forma}', '{description}', '{price}', '{size}')""")
         con.commit()
         con.close()
         for i in self.lineEdit_list:
