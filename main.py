@@ -1,14 +1,16 @@
 import sys
 import sqlite3
-from PyQt5 import uic
+from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtWidgets import QTableWidgetItem
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog
+from UI.addEditCoffeeForm import Ui_Dialog
+from UI.main import Ui_Coffee
 
 
-class MainWindow(QMainWindow):
+class MainWindow(QMainWindow, Ui_Coffee):
     def __init__(self):
         super().__init__()
-        uic.loadUi('main.ui', self)
+        self.setupUi(self)
         self.tableWidget.setHorizontalHeaderLabels(['ID', 'название сорта', 'степень обжарки',
                                                     'вид помола', 'описание вкуса', 'цена', 'объем упаковки'])
         self.show_button.clicked.connect(self.refresh_list)
@@ -26,7 +28,7 @@ class MainWindow(QMainWindow):
         update_window.show()
 
     def refresh_list(self):
-        con = sqlite3.connect("coffee.sqlite")
+        con = sqlite3.connect("data/coffee.sqlite")
         cur = con.cursor()
         result = cur.execute(f"""SELECT * from coffee_table""").fetchall() #вывод всего из БД
         con.close()
@@ -55,7 +57,7 @@ class MainWindow(QMainWindow):
 
     def delete_btn(self):
         del_id = int(self.tableWidget.selectedItems()[0].text())
-        con = sqlite3.connect("coffee.sqlite")
+        con = sqlite3.connect("data/coffee.sqlite")
         cur = con.cursor()
         cur.execute(f"""DELETE FROM coffee_table
                         WHERE id = {del_id}""")
@@ -64,10 +66,10 @@ class MainWindow(QMainWindow):
         self.refresh_list()
 
 
-class AddWindow(QDialog):
+class AddWindow(QDialog, Ui_Dialog):
     def __init__(self):
         super().__init__()
-        uic.loadUi('addEditCoffeeForm.ui', self)
+        self.setupUi(self)
         self.cancelButton.clicked.connect(self.cancel)
         self.addButton.clicked.connect(self.button_add)
         self.lineEdit_list = [self.lineEdit_sort,
@@ -105,7 +107,7 @@ class AddWindow(QDialog):
         description = self.lineEdit_description.text()
         price = self.lineEdit_price.text()
         size = self.lineEdit_size.text()
-        con = sqlite3.connect("coffee.sqlite")
+        con = sqlite3.connect("data/coffee.sqlite")
         cur = con.cursor()
         cur.execute(f"""INSERT INTO coffee_table(sort, degree, forma, description, price, size)
                         VALUES ('{sort}', '{degree}', '{forma}', '{description}', '{price}', '{size}')""")
@@ -116,10 +118,10 @@ class AddWindow(QDialog):
         ex.refresh_list()
 
 
-class UpdateWindow(AddWindow):
+class UpdateWindow(AddWindow, Ui_Dialog):
     def __init__(self):
         super().__init__()
-        uic.loadUi('addEditCoffeeForm.ui', self)
+        self.setupUi(self)
         self.cancelButton.clicked.connect(self.cancel)
         self.addButton.clicked.connect(self.UpdateButton)
         self.addButton.setText("Внести изменения")
@@ -139,7 +141,7 @@ class UpdateWindow(AddWindow):
         description = self.lineEdit_description.text()
         price = self.lineEdit_price.text()
         size = self.lineEdit_size.text()
-        con = sqlite3.connect("coffee.sqlite")
+        con = sqlite3.connect("data/coffee.sqlite")
         cur = con.cursor()
         cur.execute(f"""UPDATE coffee_table
                         SET sort = '{sort}', 
@@ -161,8 +163,6 @@ class UpdateWindow(AddWindow):
 
 
 if __name__ == '__main__':
-    from PyQt5 import QtCore, QtWidgets
-
     if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
         QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
 
